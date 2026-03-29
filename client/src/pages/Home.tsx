@@ -4,17 +4,28 @@ import OfferCard from "@/components/OfferCard";
 import OrderBump, { BumpOption } from "@/components/OrderBump";
 import OrderSummary from "@/components/OrderSummary";
 
-// ─── Links do checkout Luna ───────────────────────────────────────────────────
+// ─── Links do checkout Yampi ──────────────────────────────────────────────────
+// Base: https://seguro.neurosenseloja.com/checkout?skipToCheckout=1&tokenReference=
+//
+// Produtos sem order bump (Pés apenas):
+//   1un → F4VSJMQXAN | 2un → SXT5SPLO8S | 3un → RCC2IF9U05
+//
+// TODO: adicionar tokenReference dos kits com joelho quando criados na Yampi
+const YAMPI_BASE = "https://seguro.neurosenseloja.com/checkout?skipToCheckout=1&tokenReference=";
+
 const CHECKOUT_LINKS: Record<string, string> = {
-  "1_none":    "https://checkout.neurosenseloja.com/checkout?product=cc36391c-2253-11f1-b2a5-46da4690ad53",
-  "2_none":    "https://checkout.neurosenseloja.com/checkout?product=03850cfb-2254-11f1-b2a5-46da4690ad53",
-  "3_none":    "https://checkout.neurosenseloja.com/checkout?product=46c64287-2254-11f1-b2a5-46da4690ad53",
-  "1_joelho1": "https://checkout.neurosenseloja.com/checkout?kit=019cfff2-939b-707d-90a6-de54edec51c5",
-  "2_joelho1": "https://checkout.neurosenseloja.com/checkout?kit=019cfff2-9d03-7325-8076-e4e539eb5ce8",
-  "3_joelho1": "https://checkout.neurosenseloja.com/checkout?kit=019cfff2-833d-7271-9d60-f9e5665cd56d",
-  "1_joelho2": "https://checkout.neurosenseloja.com/checkout?kit=019cfff6-bc7f-7121-9579-12f07722133d",
-  "2_joelho2": "https://checkout.neurosenseloja.com/checkout?kit=019cfff6-c4c8-723f-9526-c55962f500f0",
-  "3_joelho2": "https://checkout.neurosenseloja.com/checkout?kit=019cfff6-a93d-70ea-b37f-0e2f77086039",
+  // ── Sem order bump ──────────────────────────────────────────────────────────
+  "1_none":    YAMPI_BASE + "F4VSJMQXAN",
+  "2_none":    YAMPI_BASE + "SXT5SPLO8S",
+  "3_none":    YAMPI_BASE + "RCC2IF9U05",
+
+  // ── Com Order Bump Joelho — TODO: substituir pelo tokenReference correto ────
+  "1_joelho1": YAMPI_BASE + "F4VSJMQXAN", // TODO: kit 1un Pés + 1 Joelho
+  "2_joelho1": YAMPI_BASE + "SXT5SPLO8S", // TODO: kit 2un Pés + 1 Joelho
+  "3_joelho1": YAMPI_BASE + "RCC2IF9U05", // TODO: kit 3un Pés + 1 Joelho
+  "1_joelho2": YAMPI_BASE + "F4VSJMQXAN", // TODO: kit 1un Pés + 2 Joelhos
+  "2_joelho2": YAMPI_BASE + "SXT5SPLO8S", // TODO: kit 2un Pés + 2 Joelhos
+  "3_joelho2": YAMPI_BASE + "RCC2IF9U05", // TODO: kit 3un Pés + 2 Joelhos
 };
 
 // ─── Features compartilhadas entre todos os cards ────────────────────────────
