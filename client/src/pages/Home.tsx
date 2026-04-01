@@ -1,31 +1,12 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import OfferCard from "@/components/OfferCard";
-import OrderBump, { BumpOption } from "@/components/OrderBump";
 import OrderSummary from "@/components/OrderSummary";
 
-// ─── Links do checkout Yampi ──────────────────────────────────────────────────
-// Base: https://seguro.neurosenseloja.com/checkout?skipToCheckout=1&tokenReference=
-//
-// Produtos sem order bump (Pés apenas):
-//   1un → F4VSJMQXAN | 2un → SXT5SPLO8S | 3un → RCC2IF9U05
-//
-// TODO: adicionar tokenReference dos kits com joelho quando criados na Yampi
-const YAMPI_BASE = "https://seguro.neurosenseloja.com/checkout?skipToCheckout=1&tokenReference=";
-
-const CHECKOUT_LINKS: Record<string, string> = {
-  // ── Sem order bump ──────────────────────────────────────────────────────────
-  "1_none":    YAMPI_BASE + "F4VSJMQXAN",
-  "2_none":    YAMPI_BASE + "SXT5SPLO8S",
-  "3_none":    YAMPI_BASE + "RCC2IF9U05",
-
-  // ── Com Order Bump Joelho — TODO: substituir pelo tokenReference correto ────
-  "1_joelho1": YAMPI_BASE + "F4VSJMQXAN", // TODO: kit 1un Pés + 1 Joelho
-  "2_joelho1": YAMPI_BASE + "SXT5SPLO8S", // TODO: kit 2un Pés + 1 Joelho
-  "3_joelho1": YAMPI_BASE + "RCC2IF9U05", // TODO: kit 3un Pés + 1 Joelho
-  "1_joelho2": YAMPI_BASE + "F4VSJMQXAN", // TODO: kit 1un Pés + 2 Joelhos
-  "2_joelho2": YAMPI_BASE + "SXT5SPLO8S", // TODO: kit 2un Pés + 2 Joelhos
-  "3_joelho2": YAMPI_BASE + "RCC2IF9U05", // TODO: kit 3un Pés + 2 Joelhos
+const CHECKOUT_LINKS: Record<number, string> = {
+  1: "https://pagamento.neurosenseloja.com/checkout?product=cbf7ea28-2cce-11f1-b2a5-46da4690ad53",
+  2: "https://pagamento.neurosenseloja.com/checkout?product=ca6e2ff6-2cce-11f1-b2a5-46da4690ad53",
+  3: "https://pagamento.neurosenseloja.com/checkout?product=c89fbaca-2cce-11f1-b2a5-46da4690ad53",
 };
 
 // ─── Features compartilhadas entre todos os cards ────────────────────────────
@@ -86,38 +67,19 @@ const trustSeals = [
   },
 ];
 
-// ─── Preços do order bump ─────────────────────────────────────────────────────
-const BUMP_PRICES: Record<string, number> = {
-  joelho1: 197.00,
-  joelho2: 277.00,
-};
-
 export default function Home() {
   const [selectedQuantity, setSelectedQuantity] = useState<number | null>(null);
-  const [selectedBump, setSelectedBump] = useState<BumpOption>(null);
 
   const selectedOffer = mainOffers.find((o) => o.quantity === selectedQuantity);
-  const bumpPrice = selectedBump ? BUMP_PRICES[selectedBump] : 0;
-  const total = (selectedOffer?.price ?? 0) + bumpPrice;
 
   const handleContinue = () => {
     if (!selectedQuantity) return;
-    const bumpKey = selectedBump ?? "none";
-    sessionStorage.setItem("neurosense_bump", bumpKey);
-    sessionStorage.setItem("neurosense_qty", String(selectedQuantity));
-    window.location.href = CHECKOUT_LINKS[`${selectedQuantity}_${bumpKey}`];
+    window.location.href = CHECKOUT_LINKS[selectedQuantity];
   };
 
   const summaryLabel = selectedOffer
     ? `Massageador de Pés — ${selectedOffer.quantity} ${selectedOffer.quantity === 1 ? "Unidade" : "Unidades"}`
     : "";
-
-  const bumpSummaryItems =
-    selectedBump === "joelho1"
-      ? [{ label: "Massageador de Joelho — 1 Unidade", price: 197.00 }]
-      : selectedBump === "joelho2"
-      ? [{ label: "Massageador de Joelho — 2 Unidades", price: 277.00 }]
-      : [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -130,10 +92,7 @@ export default function Home() {
       >
         <div className="container py-3">
           <div className="flex flex-col items-center gap-1">
-            <img src="/images/logo.png" alt="Neuro Sense" className="h-8 object-contain" />
-            <h1 className="font-display text-xl font-bold text-foreground">
-              Complete Seu Pedido
-            </h1>
+            <img src="/images/pix-neuro.svg" alt="Neuro Sense" className="h-8 object-contain" />
           </div>
         </div>
       </motion.header>
@@ -175,22 +134,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Order Bump */}
-        {selectedQuantity && (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mb-10"
-          >
-            <OrderBump
-              selectedBump={selectedBump}
-              onSelect={setSelectedBump}
-              joelhoImage="/images/joelho-1x.png"
-            />
-          </motion.div>
-        )}
-
         {/* Selos de Confiança */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -227,8 +170,8 @@ export default function Home() {
         <OrderSummary
           productLabel={summaryLabel}
           productPrice={selectedOffer?.price ?? 0}
-          bumpItems={bumpSummaryItems}
-          total={total}
+          bumpItems={[]}
+          total={selectedOffer?.price ?? 0}
           onContinue={handleContinue}
         />
       )}
